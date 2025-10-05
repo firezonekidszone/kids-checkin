@@ -15,9 +15,7 @@ export default function Page() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setMsg(null);
-    // aquí solo simula OK para compilar limpio
-    setTimeout(() => setMsg('Inscripción guardada (demo).'), 300);
+    setMsg('Inscripción guardada (demo).');
   };
 
   const inputStyle: React.CSSProperties = {
@@ -46,16 +44,16 @@ export default function Page() {
           <div key={i} style={{ border: '1px solid #eee', padding: 12, margin: '8px 0' }}>
             <input style={inputStyle} placeholder="Nombre completo"
                    value={c.full_name}
-                   onChange={(e)=>setChildren(cs => (cs.map((x,idx)=> idx===i ? {...x, full_name:e.target.value} : x)))} />
+                   onChange={(e)=>setChildren(cs => cs.map((x,idx)=> idx===i ? {...x, full_name:e.target.value} : x))} />
             <input style={inputStyle} placeholder="Fecha de nacimiento (YYYY-MM-DD)"
                    value={c.dob}
-                   onChange={(e)=>setChildren(cs => (cs.map((x,idx)=> idx===i ? {...x, dob:e.target.value} : x)))} />
+                   onChange={(e)=>setChildren(cs => cs.map((x,idx)=> idx===i ? {...x, dob:e.target.value} : x))} />
             <input style={inputStyle} placeholder="Alergias (opcional)"
                    value={c.allergies || ''}
-                   onChange={(e)=>setChildren(cs => (cs.map((x,idx)=> idx===i ? {...x, allergies:e.target.value} : x)))} />
+                   onChange={(e)=>setChildren(cs => cs.map((x,idx)=> idx===i ? {...x, allergies:e.target.value} : x))} />
             <input style={inputStyle} placeholder="Notas (opcional)"
                    value={c.notes || ''}
-                   onChange={(e)=>setChildren(cs => (cs.map((x,idx)=> idx===i ? {...x, notes:e.target.value} : x)))} />
+                   onChange={(e)=>setChildren(cs => cs.map((x,idx)=> idx===i ? {...x, notes:e.target.value} : x))} />
           </div>
         ))}
 
