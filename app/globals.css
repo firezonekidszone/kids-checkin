@@ -1,0 +1,5 @@
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,Arial,sans-serif;background:#fff;color:#111}
+a{color:#0366d6;text-decoration:none}
+a:hover{text-decoration:underline}
+input,button{font-size:16px}
