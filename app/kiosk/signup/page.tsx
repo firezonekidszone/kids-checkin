@@ -25,8 +25,6 @@ export default function SignupPage() {
     setMsg('Enviando…');
 
     try {
-      // 👉 De momento solo mostramos los datos para confirmar que la página funciona en producción.
-      // Más tarde volvemos a conectar con la API/Supabase.
       console.log({
         guardian: { guardianName, email, phone },
         children,
@@ -65,7 +63,7 @@ export default function SignupPage() {
           placeholder="Teléfono (solo números)"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
-          pattern="^[0-9+\-\s()]*$"
+          pattern="^[0-9+\\-\\s()]*$"
           required
           style={inputStyle}
         />
@@ -94,7 +92,7 @@ export default function SignupPage() {
                 n[i].dob = e.target.value;
                 setChildren(n);
               }}
-              pattern="^\d{4}-\d{2}-\d{2}$"
+              pattern="^\\d{4}-\\d{2}-\\d{2}$"
               required
               style={inputStyle}
             />
