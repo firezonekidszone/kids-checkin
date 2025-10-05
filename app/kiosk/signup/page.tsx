@@ -1,118 +1,135 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 
-type Child = { full_name: string; dob: string; allergies?: string; notes?: string };
+type NewChild = { full_name: string; dob: string; allergies?: string; notes?: string };
 
-export default function SignupPage() {
-  const [guardian, setGuardian] = useState({
-    full_name: '',
-    phone: '',
-    email: '',
-    emergency_name: '',
-    emergency_phone: '',
-  });
-  const [children, setChildren] = useState<Child[]>([
-    { full_name: '', dob: '', allergies: '', notes: '' },
-  ]);
-  const [saving, setSaving] = useState(false);
+export default function Page() {
+  const [guardianName, setGuardianName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [children, setChildren] = useState<NewChild[]>([{ full_name: '', dob: '' }]);
+  const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
 
-  const addChild = () => setChildren([...children, { full_name: '', dob: '' } as Child]);
+  function addChild() {
+    setChildren((prev) => [...prev, { full_name: '', dob: '' }]);
+  }
 
-  const onSubmit = async (e: React.FormEvent) => {
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setSaving(true);
     setMsg(null);
+    setLoading(true);
     try {
       const res = await fetch('/api/kiosk/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ guardian, children }),
+        body: JSON.stringify({
+          guardian: { full_name: guardianName, phone, email },
+          children,
+        }),
       });
-      const js = await res.json();
-      if (!js.ok) throw new Error(js.error || 'Error');
-      setMsg('¡Guardado con éxito!');
+      const data = await res.json();
+      if (!res.ok || !data?.ok) throw new Error(data?.error || 'No se pudo registrar.');
+      setMsg('¡Familia registrada! Ya pueden hacer check-in.');
     } catch (err: any) {
-      setMsg(err.message || 'Error');
+      setMsg(err.message || 'Error al registrar.');
     } finally {
-      setSaving(false);
+      setLoading(false);
     }
-  };
+  }
 
   return (
-    <div style={{ maxWidth: 640, margin: '24px auto', padding: 16 }}>
-      <h1>Inscripción de Familia</h1>
+    <div style={{ maxWidth: 600, margin: '40px auto', fontFamily: 'system-ui, Arial' }}>
+      <h1>Inscripción de familia</h1>
 
       <form onSubmit={onSubmit}>
         <h3>Tutor</h3>
-        <input placeholder="Nombre completo"
-               value={guardian.full_name}
-               onChange={e => setGuardian({ ...guardian, full_name: e.target.value })}
+        <label>Nombre completo</label>
+        <input
+          style={{ display: 'block', width: '100%', marginBottom: 8, padding: 10, border: '1px solid #ccc', borderRadius: 6 }}
+          value={guardianName}
+          onChange={(e) => setGuardianName(e.target.value)}
         />
-        <input placeholder="Teléfono (solo dígitos)"
-               value={guardian.phone}
-               onChange={e => setGuardian({ ...guardian, phone: e.target.value })}
+
+        <label>Teléfono</label>
+        <input
+          type="tel"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          style={{ display: 'block', width: '100%', marginBottom: 8, padding: 10, border: '1px solid #ccc', borderRadius: 6 }}
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
         />
-        <input placeholder="Email (opcional)"
-               value={guardian.email}
-               onChange={e => setGuardian({ ...guardian, email: e.target.value })}
-        />
-        <input placeholder="Contacto de emergencia (opcional)"
-               value={guardian.emergency_name}
-               onChange={e => setGuardian({ ...guardian, emergency_name: e.target.value })}
-        />
-        <input placeholder="Tel. de emergencia (opcional)"
-               value={guardian.emergency_phone}
-               onChange={e => setGuardian({ ...guardian, emergency_phone: e.target.value })}
+
+        <label>Email (opcional)</label>
+        <input
+          type="email"
+          style={{ display: 'block', width: '100%', marginBottom: 16, padding: 10, border: '1px solid #ccc', borderRadius: 6 }}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
 
         <h3>Niños</h3>
         {children.map((c, i) => (
-          <div key={i} style={{ border: '1px solid #ddd', padding: 12, marginBottom: 8 }}>
-            <input placeholder="Nombre completo"
-                   value={c.full_name}
-                   onChange={e => {
-                     const n = [...children]; n[i].full_name = e.target.value; setChildren(n);
-                   }}
+          <div key={i} style={{ padding: 12, border: '1px solid #eee', borderRadius: 6, marginBottom: 10 }}>
+            <label>Nombre completo</label>
+            <input
+              style={{ display: 'block', width: '100%', marginBottom: 8, padding: 10, border: '1px solid #ccc', borderRadius: 6 }}
+              value={c.full_name}
+              onChange={(e) => {
+                const copy = [...children];
+                copy[i].full_name = e.target.value;
+                setChildren(copy);
+              }}
             />
-            <input placeholder="Fecha de nacimiento (AAAA-MM-DD)"
-                   value={c.dob}
-                   onChange={e => {
-                     const n = [...children]; n[i].dob = e.target.value; setChildren(n);
-                   }}
+            <label>Fecha de nacimiento</label>
+            <input
+              type="date"
+              style={{ display: 'block', width: '100%', marginBottom: 8, padding: 10, border: '1px solid #ccc', borderRadius: 6 }}
+              value={c.dob}
+              onChange={(e) => {
+                const copy = [...children];
+                copy[i].dob = e.target.value;
+                setChildren(copy);
+              }}
             />
-            <input placeholder="Alergias (opcional)"
-                   value={c.allergies || ''}
-                   onChange={e => {
-                     const n = [...children]; n[i].allergies = e.target.value; setChildren(n);
-                   }}
+            <label>Alergias (opcional)</label>
+            <input
+              style={{ display: 'block', width: '100%', marginBottom: 8, padding: 10, border: '1px solid #ccc', borderRadius: 6 }}
+              value={c.allergies || ''}
+              onChange={(e) => {
+                const copy = [...children];
+                copy[i].allergies = e.target.value;
+                setChildren(copy);
+              }}
             />
-            <input placeholder="Notas (opcional)"
-                   value={c.notes || ''}
-                   onChange={e => {
-                     const n = [...children]; n[i].notes = e.target.value; setChildren(n);
-                   }}
+            <label>Notas (opcional)</label>
+            <input
+              style={{ display: 'block', width: '100%', padding: 10, border: '1px solid #ccc', borderRadius: 6 }}
+              value={c.notes || ''}
+              onChange={(e) => {
+                const copy = [...children];
+                copy[i].notes = e.target.value;
+                setChildren(copy);
+              }}
             />
           </div>
         ))}
 
-        <button type="button" onClick={addChild}>+ Agregar niño</button>
-        <button type="submit" disabled={saving} style={{ marginLeft: 8 }}>
-          {saving ? 'Guardando...' : 'Guardar'}
+        <button type="button" onClick={addChild} style={{ padding: '8px 12px', border: '1px solid #000', borderRadius: 6, marginRight: 8 }}>
+          + Agregar niño
+        </button>
+        <button type="submit" disabled={loading} style={{ padding: '8px 12px', border: '1px solid #000', borderRadius: 6 }}>
+          {loading ? 'Guardando…' : 'Guardar'}
         </button>
       </form>
 
-      {msg && <p style={{ marginTop: 12 }}>{msg}</p>}
+      {msg && <div style={{ marginTop: 12, padding: 10, border: '1px solid #ddd', borderRadius: 6 }}>{msg}</div>}
 
-      <div style={{ marginTop: 16 }}>
+      <div style={{ marginTop: 24 }}>
         <a href="/kiosk/checkin">Ir a Check-In →</a>
       </div>
-
-      <style jsx>{`
-        input { display:block; width:100%; padding:10px; margin:6px 0; border:1px solid #ccc; border-radius:6px; }
-        button { padding:8px 14px; border:1px solid #000; border-radius:6px; margin-right:8px; }
-      `}</style>
     </div>
   );
 }
