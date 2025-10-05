@@ -1,11 +1,12 @@
-export default function Home() {
+export default function Page() {
+  const linkStyle: React.CSSProperties = { display: 'block', marginTop: 10 };
+
   return (
-    <main style={{ maxWidth: 720, margin: '40px auto', fontFamily: 'system-ui, sans-serif' }}>
+    <main style={{ padding: 20 }}>
       <h1>Kids Check-In</h1>
-      <ul>
-        <li><a href="/kiosk/signup">Inscripción de familia</a></li>
-        <li><a href="/kiosk/checkin">Check-In</a></li>
-      </ul>
+
+      <a href="/kiosk/signup" style={linkStyle}>📝 Inscripción de familia</a>
+      <a href="/kiosk/checkin" style={linkStyle}>✅ Check-In</a>
     </main>
   );
 }
