@@ -4,7 +4,7 @@ export default function Home() {
       <h1>Kids Check-In</h1>
       <ul>
         <li><a href="/kiosk/signup">Inscripción de familia</a></li>
-        <li><a href="/kiosk/checkin">Check-in</a></li>
+        <li><a href="/kiosk/checkin">Check-In</a></li>
       </ul>
     </main>
   );
